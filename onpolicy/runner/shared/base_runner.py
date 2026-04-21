@@ -62,6 +62,9 @@ class Runner(object):
             self.save_dir = str(self.run_dir / 'models')
             if not os.path.exists(self.save_dir):
                 os.makedirs(self.save_dir)
+            self.gif_dir = str(self.run_dir / 'gifs')
+            if not os.path.exists(self.gif_dir):
+                os.makedirs(self.gif_dir)
 
         if self.algorithm_name == "mat" or self.algorithm_name == "mat_dec":
             from onpolicy.algorithms.mat.mat_trainer import MATTrainer as TrainAlgo
