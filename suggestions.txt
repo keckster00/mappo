@@ -1,1 +1,6 @@
 can always use google collab pro as a student for processing
+
+Use your laptop or any device of your preference to show the demo.
+Your code should be working and running before you come up to the podium.
+No time will be given for compiling, error correction, etc.
+Be ready to showcase at least 3 test cases and/or 3 main test results.
