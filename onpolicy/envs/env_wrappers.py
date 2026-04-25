@@ -206,13 +206,13 @@ class GuardSubprocVecEnv(ShareVecEnv):
         results = [remote.recv() for remote in self.remotes]
         self.waiting = False
         obs, rews, dones, infos = zip(*results)
-        return np.stack(obs), np.stack(rews), np.stack(dones), infos
+        return np.array(list(obs), dtype=object), np.stack(rews), np.stack(dones), infos
 
     def reset(self):
         for remote in self.remotes:
             remote.send(('reset', None))
         obs = [remote.recv() for remote in self.remotes]
-        return np.stack(obs)
+        return np.array(obs, dtype=object)
 
     def reset_task(self):
         for remote in self.remotes:
@@ -263,13 +263,13 @@ class SubprocVecEnv(ShareVecEnv):
         results = [remote.recv() for remote in self.remotes]
         self.waiting = False
         obs, rews, dones, infos = zip(*results)
-        return np.stack(obs), np.stack(rews), np.stack(dones), infos
+        return np.array(list(obs), dtype=object), np.stack(rews), np.stack(dones), infos
 
     def reset(self):
         for remote in self.remotes:
             remote.send(('reset', None))
         obs = [remote.recv() for remote in self.remotes]
-        return np.stack(obs)
+        return np.array(obs, dtype=object)
 
 
     def reset_task(self):
@@ -671,7 +671,10 @@ class DummyVecEnv(ShareVecEnv):
 
     def step_wait(self):
         results = [env.step(a) for (a, env) in zip(self.actions, self.envs)]
-        obs, rews, dones, infos = map(np.array, zip(*results))
+        obs_list, rews_list, dones_list, infos_list = zip(*results)
+        obs = np.array(list(obs_list), dtype=object)
+        rews = np.array(list(rews_list))
+        dones = np.array(list(dones_list))
 
         for (i, done) in enumerate(dones):
             if 'bool' in done.__class__.__name__:
@@ -682,11 +685,11 @@ class DummyVecEnv(ShareVecEnv):
                     obs[i] = self.envs[i].reset()
 
         self.actions = None
-        return obs, rews, dones, infos
+        return obs, rews, dones, list(infos_list)
 
     def reset(self):
         obs = [env.reset() for env in self.envs]
-        return np.array(obs)
+        return np.array(obs, dtype=object)
 
     def close(self):
         for env in self.envs:
